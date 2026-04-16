@@ -1404,7 +1404,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const h3 = nameRow.appendChild(mk('h3', 'art-card-dish'));
     h3.textContent = name;
 
-    if (instagram || website) {
+    if (instagram || website || address) {
       const social = nameRow.appendChild(mk('div', 'art-card-social'));
       if (instagram) {
         const a = social.appendChild(mk('a'));
@@ -1423,6 +1423,26 @@ document.addEventListener('DOMContentLoaded', () => {
         a.setAttribute('aria-label', 'Website');
         a.addEventListener('click', e => e.stopPropagation());
         a.innerHTML = SVG_GLOBE;
+      }
+      if (address) {
+        const a = social.appendChild(mk('a'));
+        a.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ', ' + address);
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.setAttribute('aria-label', 'Maps');
+        a.addEventListener('click', e => e.stopPropagation());
+        // Build map-pin SVG via DOM to avoid innerHTML with SVG strings
+        const ns = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('width', '11'); svg.setAttribute('height', '11');
+        svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2.5');
+        const pin = document.createElementNS(ns, 'path');
+        pin.setAttribute('d', 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z');
+        const dot = document.createElementNS(ns, 'circle');
+        dot.setAttribute('cx', '12'); dot.setAttribute('cy', '10'); dot.setAttribute('r', '3');
+        svg.appendChild(pin); svg.appendChild(dot);
+        a.appendChild(svg);
       }
     }
 

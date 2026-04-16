@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "blueprint",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "3000"],
+      "runtimeExecutable": "ruby",
+      "runtimeArgs": ["-run", "-e", "httpd", "--", "-p", "3000", "/Users/jakobfleig/Desktop/blueprint"],
       "port": 3000
     }
   ]
