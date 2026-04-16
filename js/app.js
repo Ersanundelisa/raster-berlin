@@ -1116,7 +1116,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentPage = 'start';
   let galleriesLoaded = false;
-  let sketchMapInstance = null;
 
   function navigateToPage(pageName) {
     if (pageName === currentPage) return;
@@ -1144,15 +1143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Lazy-load gallery cards on first visit
         if (pageName === 'musts') {
           maybeLoadGalleries();
-        }
-
-        // Init or invalidate sketch map when returning to start
-        if (pageName === 'start') {
-          if (!sketchMapInstance) {
-            initSketchMap();
-          } else {
-            setTimeout(() => sketchMapInstance.invalidateSize(), 50);
-          }
         }
 
         // Globe intro → then init map
@@ -1316,52 +1306,6 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('cookieConsent', 'declined');
       closeCookieSettings();
     });
-  }
-
-  // ============================================
-  // SKETCH MAP — Landing page preview
-  // ============================================
-  function initSketchMap() {
-    if (typeof L === 'undefined') return;
-    const container = document.getElementById('sketchMapContainer');
-    if (!container) return;
-
-    sketchMapInstance = L.map('sketchMapContainer', {
-      center: [52.52, 13.405],
-      zoom: 12,
-      zoomControl: false,
-      attributionControl: false,
-      dragging: false,
-      scrollWheelZoom: false,
-      touchZoom: false,
-      doubleClickZoom: false,
-      boxZoom: false,
-      keyboard: false,
-    });
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
-      maxZoom: 19,
-    }).addTo(sketchMapInstance);
-
-    spots.forEach(spot => {
-      L.circleMarker([spot.lat, spot.lng], {
-        radius: 5,
-        fillColor: '#000',
-        color: '#000',
-        weight: 1,
-        fillOpacity: 0.85,
-        interactive: false,
-      }).addTo(sketchMapInstance);
-    });
-
-    setTimeout(() => sketchMapInstance.invalidateSize(), 50);
-  }
-
-  // Click handler: sketch map → real map
-  const sketchSection = document.getElementById('mapSketchSection');
-  if (sketchSection) {
-    sketchSection.addEventListener('click', () => navigateToPage('map'));
   }
 
   // ============================================
