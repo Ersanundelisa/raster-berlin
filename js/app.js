@@ -1115,6 +1115,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const navbarBrand = document.querySelector('.navbar-brand');
 
   let currentPage = 'start';
+  let galleriesLoaded = false;
+  let sketchMapInstance = null;
 
   function navigateToPage(pageName) {
     if (pageName === currentPage) return;
@@ -1142,6 +1144,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Lazy-load gallery cards on first visit
         if (pageName === 'musts') {
           maybeLoadGalleries();
+        }
+
+        // Init or invalidate sketch map when returning to start
+        if (pageName === 'start') {
+          if (!sketchMapInstance) {
+            initSketchMap();
+          } else {
+            setTimeout(() => sketchMapInstance.invalidateSize(), 50);
+          }
         }
 
         // Globe intro → then init map
@@ -1315,7 +1326,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('sketchMapContainer');
     if (!container) return;
 
-    const sketchMap = L.map('sketchMapContainer', {
+    sketchMapInstance = L.map('sketchMapContainer', {
       center: [52.52, 13.405],
       zoom: 12,
       zoomControl: false,
@@ -1331,7 +1342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd',
       maxZoom: 19,
-    }).addTo(sketchMap);
+    }).addTo(sketchMapInstance);
 
     spots.forEach(spot => {
       L.circleMarker([spot.lat, spot.lng], {
@@ -1341,11 +1352,11 @@ document.addEventListener('DOMContentLoaded', () => {
         weight: 1,
         fillOpacity: 0.85,
         interactive: false,
-      }).addTo(sketchMap);
+      }).addTo(sketchMapInstance);
     });
-  }
 
-  initSketchMap();
+    setTimeout(() => sketchMapInstance.invalidateSize(), 50);
+  }
 
   // Click handler: sketch map → real map
   const sketchSection = document.getElementById('mapSketchSection');
@@ -1511,7 +1522,6 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => console.warn('Gallery load failed:', err));
   }
 
-  let galleriesLoaded = false;
   function maybeLoadGalleries() {
     if (!galleriesLoaded) {
       galleriesLoaded = true;
