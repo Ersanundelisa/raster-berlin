@@ -1139,6 +1139,11 @@ document.addEventListener('DOMContentLoaded', () => {
         page.classList.add('active');
         page.classList.remove('hidden');
         
+        // Lazy-load gallery cards on first visit
+        if (pageName === 'musts') {
+          maybeLoadGalleries();
+        }
+
         // Globe intro → then init map
         if (pageName === 'map') {
           showGlobeIntro(() => {
@@ -1185,7 +1190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkHash() {
-      const hash = window.location.hash.replace('#', '') || 'start';
+      const hash = window.location.hash.replace('#', '') || 'musts';
       const validPages = ['start', 'news', 'musts', 'map'];
       if (validPages.includes(hash)) {
         navigateToPage(hash);
@@ -1506,6 +1511,12 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => console.warn('Gallery load failed:', err));
   }
 
-  loadGalleries();
+  let galleriesLoaded = false;
+  function maybeLoadGalleries() {
+    if (!galleriesLoaded) {
+      galleriesLoaded = true;
+      loadGalleries();
+    }
+  }
 
 });
