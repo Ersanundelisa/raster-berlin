@@ -682,6 +682,28 @@ body {
   align-items: center;
   justify-content: flex-end;
 }
+/* Gallery card — name row with social icons */
+.art-card-name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+.art-card-social {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.art-card-social a {
+  color: #aaa;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+.art-card-social a:hover {
+  color: #000;
+}
 .art-card-flip-hint {
   font-size: 9px;
   color: #bbb;

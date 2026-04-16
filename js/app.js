@@ -24,17 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Alternating images for art cards — store IDs so they can be cleared
   let altImgIntervals = [];
-  const alternatingImages = document.querySelectorAll('.alternating-img');
-  alternatingImages.forEach(img => {
-    const images = JSON.parse(img.dataset.images || '[]');
-    if (images.length > 1) {
-      let idx = 0;
-      altImgIntervals.push(setInterval(() => {
-        idx = (idx + 1) % images.length;
-        img.src = images[idx];
-      }, 1500));
-    }
-  });
+
+  function initAlternatingImages(root = document) {
+    root.querySelectorAll('.alternating-img').forEach(img => {
+      const images = JSON.parse(img.dataset.images || '[]');
+      if (images.length > 1) {
+        let idx = 0;
+        altImgIntervals.push(setInterval(() => {
+          idx = (idx + 1) % images.length;
+          img.src = images[idx];
+        }, 1500));
+      }
+    });
+  }
+
+  initAlternatingImages();
 
   // ============================================
   // HERO SLIDER
@@ -1349,5 +1353,145 @@ document.addEventListener('DOMContentLoaded', () => {
   if (sketchSection) {
     sketchSection.addEventListener('click', () => navigateToPage('map'));
   }
+
+  // ============================================
+  // GALLERY CARDS — built from Galeriverzeichnis.csv
+  // ============================================
+
+  const SVG_INSTAGRAM = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>';
+  const SVG_GLOBE     = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>';
+  const SVG_MAPS      = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+
+  function mk(tag, className) {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    return el;
+  }
+
+  function buildGalleryCard(name, address, hours, instagram, website, photo) {
+    const photoPath = photo ? 'pics%20galleries/' + encodeURIComponent(photo) : '';
+
+    const article = mk('article', 'art-card');
+    article.dataset.dish = name;
+    article.dataset.restaurant = name;
+    article.dataset.desc = hours;
+    article.dataset.address = address;
+    article.dataset.img = photoPath;
+    article.dataset.img2 = photoPath;
+
+    const flip = article
+      .appendChild(mk('div', 'art-card-scene'))
+      .appendChild(mk('div', 'art-card-shell'))
+      .appendChild(mk('div', 'art-card-flip'));
+
+    // ── FRONT ──
+    const front = flip.appendChild(mk('div', 'art-card-face art-card-front'));
+    front.appendChild(mk('div', 'art-card-shine'));
+
+    const imgWrap = front.appendChild(mk('div', 'art-card-img-wrap'));
+    if (photoPath) {
+      const img = imgWrap.appendChild(mk('img'));
+      img.src = photoPath;
+      img.alt = name;
+      img.className = 'alternating-img';
+      img.dataset.images = JSON.stringify([photoPath]);
+      img.loading = 'lazy';
+    }
+
+    const body = front.appendChild(mk('div', 'art-card-body'));
+    const nameRow = body.appendChild(mk('div', 'art-card-name-row'));
+
+    const h3 = nameRow.appendChild(mk('h3', 'art-card-dish'));
+    h3.textContent = name;
+
+    if (instagram || website) {
+      const social = nameRow.appendChild(mk('div', 'art-card-social'));
+      if (instagram) {
+        const a = social.appendChild(mk('a'));
+        a.href = instagram;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.setAttribute('aria-label', 'Instagram');
+        a.addEventListener('click', e => e.stopPropagation());
+        a.innerHTML = SVG_INSTAGRAM;
+      }
+      if (website) {
+        const a = social.appendChild(mk('a'));
+        a.href = website;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.setAttribute('aria-label', 'Website');
+        a.addEventListener('click', e => e.stopPropagation());
+        a.innerHTML = SVG_GLOBE;
+      }
+    }
+
+    body.appendChild(mk('p', 'art-card-restaurant')).textContent = 'Galerie';
+    body.appendChild(mk('div', 'art-card-meta'));
+
+    // ── BACK ──
+    const back = flip.appendChild(mk('div', 'art-card-face art-card-back'));
+    back.appendChild(mk('div', 'art-card-shine'));
+
+    if (photoPath) {
+      const backImg = back.appendChild(mk('img', 'art-card-back-img'));
+      backImg.src = photoPath;
+      backImg.alt = name;
+    }
+
+    const overlay = back.appendChild(mk('div', 'art-card-back-overlay'));
+    overlay.appendChild(mk('div', 'art-card-back-restaurant')).textContent = name;
+    overlay.appendChild(mk('hr', 'art-card-divider art-card-divider-dark'));
+
+    if (hours) {
+      overlay.appendChild(mk('div', 'art-card-back-desc')).textContent = hours;
+    }
+
+    if (address) {
+      const infoRows = overlay.appendChild(mk('div', 'art-card-info-rows'));
+      const infoRow  = infoRows.appendChild(mk('div', 'art-card-info-row'));
+      infoRow.appendChild(mk('span', 'art-card-info-label')).textContent = 'Adresse';
+      infoRow.appendChild(mk('span', 'art-card-info-val')).textContent = address;
+
+      const mapsBtn = overlay.appendChild(mk('a', 'art-card-maps-btn'));
+      mapsBtn.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ', ' + address);
+      mapsBtn.target = '_blank';
+      mapsBtn.rel = 'noopener';
+      mapsBtn.addEventListener('click', e => e.stopPropagation());
+      mapsBtn.innerHTML = SVG_MAPS + 'Google Maps';
+    }
+
+    return article;
+  }
+
+  function loadGalleries() {
+    const grid = document.getElementById('galleries-grid');
+    if (!grid) return;
+
+    fetch('Galeriverzeichnis.csv')
+      .then(res => {
+        if (!res.ok) throw new Error('CSV fetch failed: ' + res.status);
+        return res.text();
+      })
+      .then(text => {
+        const rows = text.trim().split('\n');
+        rows.slice(1).forEach(row => {
+          const cols = row.split(';');
+          // [0]=empty [1]=Name [2]=Address [3]=Contact [4]=Hours [5]=Instagram [6]=Website [7]=Photo
+          const name      = (cols[1] || '').trim();
+          if (!name) return;
+          const address   = (cols[2] || '').trim();
+          const hours     = (cols[4] || '').trim();
+          const instagram = (cols[5] || '').trim();
+          const website   = (cols[6] || '').trim();
+          const photo     = (cols[7] || '').trim();
+          grid.appendChild(buildGalleryCard(name, address, hours, instagram, website, photo));
+        });
+        initAlternatingImages(grid);
+      })
+      .catch(err => console.warn('Gallery load failed:', err));
+  }
+
+  loadGalleries();
 
 });
