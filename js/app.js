@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- 3D Retro Eat Card: expand → flip → collapse state machine ---
+  // --- 3D Retro Eat Card: expand → collapse state machine ---
   // Uses a portal (fixed element on body) to escape the overflow:hidden parent.
   const artCards = document.querySelectorAll('.art-card');
 
@@ -370,15 +370,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let activeCard   = null;   // card element currently expanded
   let activePortal = null;   // the fixed portal div on body
-  let cardState    = 0;      // 0: idle, 1: expanded, 2: expanded+flipped
+  let cardState    = 0;      // 0: idle, 1: expanded
 
   function collapseActiveCard() {
     if (!activeCard || !activePortal) return;
     const card   = activeCard;
     const portal = activePortal;
-
-    // Unflip
-    portal.querySelector('.art-card-flip')?.classList.remove('flipped');
 
     // Animate portal back to its original fixed position (left/top set at expand time)
     portal.style.transition = 'transform 0.42s cubic-bezier(0.32, 0, 0.67, 0), box-shadow 0.42s ease';
@@ -459,16 +456,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         artBackdrop.classList.add('active');
 
-        // Portal handles its own clicks (state 1 → 2 → 0)
+        // Portal handles its own clicks (state 1 → 0)
+        // Icon clicks (maps, instagram, website) are allowed through without collapsing.
         port.addEventListener('click', (pe) => {
           if (pe.target.closest('.art-card-maps-btn')) return;
+          if (pe.target.closest('.art-card-social a')) return;
           pe.stopPropagation();
           if (cardState === 1) {
-            cardState = 2;
-            port.querySelector('.art-card-flip')?.classList.add('flipped');
-            port.style.transition = 'transform 0.48s cubic-bezier(0.16, 1, 0.3, 1)';
-            port.style.boxShadow = '';
-          } else if (cardState === 2) {
             collapseActiveCard();
           }
         });
