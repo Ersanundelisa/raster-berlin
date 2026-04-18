@@ -1526,28 +1526,6 @@ document.addEventListener('DOMContentLoaded', () => {
       dotsEls.forEach((d, i) => d.classList.toggle('active', i === currentIdx));
     }
 
-    if (photos.length > 1) {
-      let touchStartX = 0;
-      let touchStartY = 0;
-      let didSwipe = false;
-      photoWrap.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        didSwipe = false;
-      }, { passive: true });
-      photoWrap.addEventListener('touchmove', e => {
-        const dx = e.touches[0].clientX - touchStartX;
-        const dy = e.touches[0].clientY - touchStartY;
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) didSwipe = true;
-      }, { passive: true });
-      photoWrap.addEventListener('touchend', e => {
-        if (!didSwipe) return;
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        if (Math.abs(dx) < 30) return;
-        showPhoto(dx < 0 ? currentIdx + 1 : currentIdx - 1);
-      });
-    }
-
     const info = card.appendChild(mk('div', 'artist-card-info'));
     const nameEl = info.appendChild(mk('span', 'artist-card-name'));
     nameEl.textContent = name;
@@ -1568,10 +1546,10 @@ document.addEventListener('DOMContentLoaded', () => {
       a.appendChild(mkSvgIcon('instagram'));
     }
 
-    card.addEventListener('click', () => {
-      const url = website || instagram;
-      if (url) window.open(url, '_blank', 'noopener');
-    });
+    if (photos.length > 1) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => showPhoto(currentIdx + 1));
+    }
 
     return card;
   }
