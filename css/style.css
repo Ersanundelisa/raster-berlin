@@ -104,6 +104,8 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
+  position: relative;
+  z-index: 1;
 }
 .navbar-actions .search-trigger,
 .navbar-actions .navbar-insta {
