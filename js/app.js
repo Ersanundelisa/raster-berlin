@@ -1134,6 +1134,10 @@ document.addEventListener('DOMContentLoaded', () => {
           maybeLoadGalleries();
         }
 
+        if (pageName === 'artists') {
+          maybeLoadArtists();
+        }
+
         // Globe intro → then init map
         if (pageName === 'map') {
           showGlobeIntro(() => {
