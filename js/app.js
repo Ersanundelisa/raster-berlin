@@ -1100,7 +1100,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- App Page Navigation ---
   let isMobile = window.innerWidth <= 767;
-  const appFooter = document.getElementById('appFooter');
   const appPages = document.querySelectorAll('.app-page');
   const navbarBrand = document.querySelector('.navbar-brand');
 
@@ -1152,21 +1151,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    const appFooterItems = document.querySelectorAll('.app-footer-item');
-    appFooterItems.forEach(item => {
-      item.classList.toggle('active', item.dataset.target === pageName);
+    const navNavLinks = document.querySelectorAll('.navbar-nav-link');
+    navNavLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.target === pageName);
     });
 
     currentPage = pageName;
   }
 
-  if (appFooter && appPages.length) {
-    const appFooterItems = document.querySelectorAll('.app-footer-item[data-target]');
+  if (appPages.length) {
+    const navNavLinks = document.querySelectorAll('.navbar-nav-link[data-target]');
 
-    appFooterItems.forEach(item => {
-      item.addEventListener('click', (e) => {
+    navNavLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
         e.preventDefault();
-        const target = item.dataset.target;
+        const target = link.dataset.target;
         navigateToPage(target);
         window.location.hash = target;
       });

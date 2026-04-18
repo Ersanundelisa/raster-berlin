@@ -207,6 +207,35 @@ body {
   gap: 28px;
 }
 
+.navbar-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.navbar-nav-link {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--black);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.navbar-nav-link:hover {
+  color: var(--primary);
+}
+
+.navbar-nav-link.active {
+  border-bottom-color: currentColor;
+}
+
 @media (min-width: 768px) {
   .navbar { padding: 12px 48px; }
   .navbar-links { display: flex; }
@@ -2603,11 +2632,11 @@ body {
 .app-page {
   display: none !important;
   width: 100%;
-  height: calc(100vh - 60px - 70px);
+  height: calc(100vh - 60px);
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 70px;
+  padding-bottom: 0;
 }
 
 .app-page.active {
@@ -2728,7 +2757,7 @@ body {
     top: 60px;
     left: 0;
     right: 0;
-    bottom: 70px;
+    bottom: 0;
     height: auto;
     z-index: 9990;
     background: var(--white);
@@ -3312,7 +3341,7 @@ body {
   .login-modal {
     align-items: center;
     justify-content: center;
-    bottom: 70px;
+    bottom: 0;
   }
   .login-modal-content {
     width: 90%;
