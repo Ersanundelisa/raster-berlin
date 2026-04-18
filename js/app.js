@@ -1463,4 +1463,163 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ============================================
+  // ARTIST CARDS
+  // ============================================
+  let artistsLoaded = false;
+
+  function mkSvgIcon(type) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('width', '13'); svg.setAttribute('height', '13');
+    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round'); svg.setAttribute('stroke-linejoin', 'round');
+    if (type === 'globe') {
+      const c = document.createElementNS(ns, 'circle');
+      c.setAttribute('cx', '12'); c.setAttribute('cy', '12'); c.setAttribute('r', '10');
+      const l = document.createElementNS(ns, 'line');
+      l.setAttribute('x1', '2'); l.setAttribute('y1', '12'); l.setAttribute('x2', '22'); l.setAttribute('y2', '12');
+      const p = document.createElementNS(ns, 'path');
+      p.setAttribute('d', 'M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z');
+      svg.appendChild(c); svg.appendChild(l); svg.appendChild(p);
+    } else if (type === 'instagram') {
+      const r = document.createElementNS(ns, 'rect');
+      r.setAttribute('x', '2'); r.setAttribute('y', '2'); r.setAttribute('width', '20'); r.setAttribute('height', '20');
+      r.setAttribute('rx', '5'); r.setAttribute('ry', '5');
+      const p = document.createElementNS(ns, 'path');
+      p.setAttribute('d', 'M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z');
+      const l = document.createElementNS(ns, 'line');
+      l.setAttribute('x1', '17.5'); l.setAttribute('y1', '6.5'); l.setAttribute('x2', '17.51'); l.setAttribute('y2', '6.5');
+      svg.appendChild(r); svg.appendChild(p); svg.appendChild(l);
+    }
+    return svg;
+  }
+
+  function buildArtistCard(name, website, instagram, photos) {
+    const card = mk('div', 'artist-card');
+    card.dataset.letter = name.trim()[0].toUpperCase();
+
+    const photoWrap = card.appendChild(mk('div', 'artist-card-photos'));
+    const img = photoWrap.appendChild(mk('img'));
+    img.src = 'Artists%20Photos/' + encodeURIComponent(photos[0]);
+    img.alt = name;
+    img.loading = 'lazy';
+
+    const dotsEls = [];
+    if (photos.length > 1) {
+      const dotsWrap = photoWrap.appendChild(mk('div', 'artist-card-dots'));
+      photos.forEach((_, i) => {
+        const dot = dotsWrap.appendChild(mk('span', i === 0 ? 'artist-card-dot active' : 'artist-card-dot'));
+        dotsEls.push(dot);
+      });
+    }
+
+    let currentIdx = 0;
+    function showPhoto(idx) {
+      currentIdx = (idx + photos.length) % photos.length;
+      img.src = 'Artists%20Photos/' + encodeURIComponent(photos[currentIdx]);
+      dotsEls.forEach((d, i) => d.classList.toggle('active', i === currentIdx));
+    }
+
+    if (photos.length > 1) {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let didSwipe = false;
+      photoWrap.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        didSwipe = false;
+      }, { passive: true });
+      photoWrap.addEventListener('touchmove', e => {
+        const dx = e.touches[0].clientX - touchStartX;
+        const dy = e.touches[0].clientY - touchStartY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) didSwipe = true;
+      }, { passive: true });
+      photoWrap.addEventListener('touchend', e => {
+        if (!didSwipe) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) < 30) return;
+        showPhoto(dx < 0 ? currentIdx + 1 : currentIdx - 1);
+      });
+    }
+
+    const info = card.appendChild(mk('div', 'artist-card-info'));
+    const nameEl = info.appendChild(mk('span', 'artist-card-name'));
+    nameEl.textContent = name;
+
+    const iconsRow = info.appendChild(mk('div', 'artist-card-icons'));
+    if (website) {
+      const a = iconsRow.appendChild(mk('a'));
+      a.href = website; a.target = '_blank'; a.rel = 'noopener';
+      a.setAttribute('aria-label', 'Website');
+      a.addEventListener('click', e => e.stopPropagation());
+      a.appendChild(mkSvgIcon('globe'));
+    }
+    if (instagram) {
+      const a = iconsRow.appendChild(mk('a'));
+      a.href = instagram; a.target = '_blank'; a.rel = 'noopener';
+      a.setAttribute('aria-label', 'Instagram');
+      a.addEventListener('click', e => e.stopPropagation());
+      a.appendChild(mkSvgIcon('instagram'));
+    }
+
+    card.addEventListener('click', () => {
+      const url = website || instagram;
+      if (url) window.open(url, '_blank', 'noopener');
+    });
+
+    return card;
+  }
+
+  function loadArtists() {
+    const grid = document.getElementById('artistsGrid');
+    if (!grid) return;
+    fetch('Artistsverzeichnis.csv')
+      .then(res => {
+        if (!res.ok) throw new Error('CSV fetch failed: ' + res.status);
+        return res.text();
+      })
+      .then(text => {
+        const rows = text.trim().split('\n');
+        rows.slice(1).forEach(row => {
+          const cols = row.split(';');
+          const name      = (cols[1] || '').trim();
+          if (!name) return;
+          const website   = (cols[2] || '').trim();
+          const instagram = (cols[3] || '').trim();
+          const photos    = [cols[4], cols[5], cols[6], cols[7]]
+            .map(p => (p || '').trim())
+            .filter(Boolean);
+          if (!photos.length) return;
+          grid.appendChild(buildArtistCard(name, website, instagram, photos));
+        });
+        initArtistsAlphaFilter();
+      })
+      .catch(err => console.warn('Artists load failed:', err));
+  }
+
+  function maybeLoadArtists() {
+    if (!artistsLoaded) {
+      artistsLoaded = true;
+      loadArtists();
+    }
+  }
+
+  function initArtistsAlphaFilter() {
+    const btns = document.querySelectorAll('.artists-alpha-btn');
+    const grid = document.getElementById('artistsGrid');
+    if (!btns.length || !grid) return;
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const letter = btn.dataset.letter;
+        grid.querySelectorAll('.artist-card').forEach(card => {
+          card.style.display = (letter === 'all' || card.dataset.letter === letter) ? '' : 'none';
+        });
+      });
+    });
+  }
+
 });
