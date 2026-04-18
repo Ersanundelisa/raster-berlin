@@ -362,8 +362,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 3D Retro Eat Card: expand → collapse state machine ---
   // Uses a portal (fixed element on body) to escape the overflow:hidden parent.
-  const artCards = document.querySelectorAll('.art-card');
-
   const artBackdrop = document.createElement('div');
   artBackdrop.className = 'art-card-backdrop';
   document.body.appendChild(artBackdrop);
@@ -401,29 +399,24 @@ document.addEventListener('DOMContentLoaded', () => {
   artBackdrop.addEventListener('click', collapseActiveCard);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') collapseActiveCard(); });
 
-  artCards.forEach(card => {
+  function attachCardExpand(card) {
     card.addEventListener('click', (e) => {
       if (e.target.closest('.art-card-maps-btn')) return;
 
-      // Another card is open → collapse it, don't open this one immediately
       if (activeCard && activeCard !== card) {
         collapseActiveCard();
         return;
       }
 
       if (cardState === 0) {
-        // ── State 0 → 1: fly to viewport center via portal ──
         const rect    = card.getBoundingClientRect();
         const targetW = Math.min(340, window.innerWidth * 0.85);
         const scale   = targetW / rect.width;
         const dx      = window.innerWidth  / 2 - (rect.left + rect.width  / 2);
         const dy      = window.innerHeight / 2 - (rect.top  + rect.height / 2);
 
-        const scene  = card.querySelector('.art-card-scene');
-        const flipEl = scene.querySelector('.art-card-flip');
-        flipEl?.classList.remove('flipped');
+        const scene = card.querySelector('.art-card-scene');
 
-        // Build portal at exact card position (will animate out from here)
         const port = document.createElement('div');
         port.className = 'art-card-portal';
         port.style.cssText = [
@@ -439,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `transition:none`,
         ].join(';');
 
-        port.appendChild(scene);       // move (not clone) scene into portal
+        port.appendChild(scene);
         document.body.appendChild(port);
         card.style.opacity       = '0';
         card.style.visibility    = 'hidden';
@@ -449,15 +442,13 @@ document.addEventListener('DOMContentLoaded', () => {
         activePortal = port;
         cardState    = 1;
 
-        port.offsetHeight; // force reflow before transition
+        port.offsetHeight;
 
         port.style.transition = 'transform 0.48s cubic-bezier(0.16, 1, 0.3, 1)';
         port.style.transform  = `translate(${dx}px, ${dy}px) scale(${scale})`;
 
         artBackdrop.classList.add('active');
 
-        // Portal handles its own clicks (state 1 → 0)
-        // Icon clicks (maps, instagram, website) are allowed through without collapsing.
         port.addEventListener('click', (pe) => {
           if (pe.target.closest('.art-card-maps-btn')) return;
           if (pe.target.closest('.art-card-social a')) return;
@@ -466,10 +457,9 @@ document.addEventListener('DOMContentLoaded', () => {
             collapseActiveCard();
           }
         });
-
       }
     });
-  });
+  }
 
   // --- Must Eat Modal (kept for other potential uses) ---
   const modal = document.getElementById('artModal');
@@ -1435,6 +1425,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mapsBtn.innerHTML = SVG_MAPS + 'Google Maps';
     }
 
+    attachCardExpand(article);
     return article;
   }
 
