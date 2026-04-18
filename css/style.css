@@ -4324,6 +4324,97 @@ body {
   color: var(--gray-400);
 }
 
+/* Artist Cards Grid */
+.artists-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.artist-card {
+  cursor: pointer;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--gray-50, #f8f8f8);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.artist-card-photos {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--gray-100);
+}
+
+.artist-card-photos img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.artist-card-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.artist-card-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transition: background 0.15s;
+}
+
+.artist-card-dot.active {
+  background: #fff;
+}
+
+.artist-card-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 6px 10px;
+  gap: 6px;
+}
+
+.artist-card-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.artist-card-icons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.artist-card-icons a {
+  color: var(--gray-400);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.artist-card-icons a:hover {
+  color: var(--black);
+}
+
 /* Hero scroll hint */
 .hero-scroll-hint {
   position: absolute;
