@@ -223,6 +223,8 @@ body {
   text-transform: uppercase;
   color: var(--black);
   text-decoration: none;
+  display: flex;
+  align-items: center;
   padding-bottom: 2px;
   border-bottom: 1.5px solid transparent;
   transition: border-color 0.2s, color 0.2s;
@@ -234,6 +236,20 @@ body {
 
 .navbar-nav-link.active {
   border-bottom-color: currentColor;
+}
+
+.navbar-nav-icon {
+  display: none;
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 767px) {
+  .navbar-nav-icon { display: block; }
+  .navbar-nav-label { display: none; }
+  .navbar-nav-link { border-bottom: none; padding-bottom: 0; }
+  .navbar-nav-link.active svg { stroke: var(--black); opacity: 1; }
+  .navbar-nav-link svg { opacity: 0.45; transition: opacity 0.2s; }
 }
 
 @media (min-width: 768px) {
