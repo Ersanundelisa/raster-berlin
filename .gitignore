@@ -1,6 +1,0 @@
-.DS_Store
-serve.py
-*.py
-__pycache__/
-.claude/settings.local.json
-.superpowers/
