@@ -1,11 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import mapboxgl from 'mapbox-gl'
+import maplibregl from 'maplibre-gl'
 import { VenuePanel } from './VenuePanel'
 import { MapFilters } from './MapFilters'
-
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!
 
 interface Venue {
   _id: string
@@ -24,8 +22,8 @@ interface Props {
 
 export function Map({ venues }: Props) {
   const mapContainer = useRef<HTMLDivElement>(null)
-  const map = useRef<mapboxgl.Map | null>(null)
-  const markersRef = useRef<{ marker: mapboxgl.Marker; venue: Venue }[]>([])
+  const map = useRef<maplibregl.Map | null>(null)
+  const markersRef = useRef<{ marker: maplibregl.Marker; venue: Venue }[]>([])
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null)
   const [venueType, setVenueType] = useState('all')
   const [neighborhood, setNeighborhood] = useState('All')
@@ -33,15 +31,15 @@ export function Map({ venues }: Props) {
   useEffect(() => {
     if (map.current || !mapContainer.current) return
 
-    map.current = new mapboxgl.Map({
+    map.current = new maplibregl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
       center: [13.405, 52.52],
       zoom: 12,
     })
 
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-left')
-    map.current.addControl(new mapboxgl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: false }), 'top-left')
+    map.current.addControl(new maplibregl.NavigationControl(), 'top-left')
+    map.current.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: false }), 'top-left')
 
     venues.forEach(venue => {
       if (!venue.coordinates?.lat) return
@@ -55,7 +53,7 @@ export function Map({ venues }: Props) {
         cursor: pointer;
       `
 
-      const marker = new mapboxgl.Marker(el)
+      const marker = new maplibregl.Marker(el)
         .setLngLat([venue.coordinates.lng, venue.coordinates.lat])
         .addTo(map.current!)
 
