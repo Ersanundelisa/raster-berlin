@@ -38,7 +38,7 @@ export default async function GalleryPage({ params }: { params: Promise<{ slug: 
         {venue.hours?.length > 0 && (
           <div className="mb-12">
             <h2 className="text-xs uppercase tracking-widest text-gray-400 mb-3">Hours</h2>
-            {venue.hours.map((h: string, i: number) => <p key={i} className="text-sm text-gray-700">{h}</p>)}
+            {venue.hours.map((h: string, i: number) => <p key={`${h}-${i}`} className="text-sm text-gray-700">{h}</p>)}
           </div>
         )}
 

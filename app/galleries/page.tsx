@@ -19,12 +19,14 @@ export default async function GalleriesPage() {
           </div>
         </section>
       )}
-      <section>
-        <h2 className="text-xs uppercase tracking-widest text-gray-400 mb-8">Galleries</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {galleries.map((v: any) => <VenueCard key={v._id} venue={v} />)}
-        </div>
-      </section>
+      {galleries.length > 0 && (
+        <section>
+          <h2 className="text-xs uppercase tracking-widest text-gray-400 mb-8">Galleries</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {galleries.map((v: any) => <VenueCard key={v._id} venue={v} />)}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
