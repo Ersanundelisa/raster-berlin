@@ -13,7 +13,7 @@ export function JournalEditor({ userId, eventId }: Props) {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const supabase = useMemo(() => createBrowserClient(), [])
-  const timerRef = useRef<ReturnType<typeof setTimeout>>()
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
     supabase.from('journal_entries')

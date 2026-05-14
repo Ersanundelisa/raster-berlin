@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { withAiDraft } from '../plugins/aiDraft'
 
 export const artist = defineType({
   name: 'artist',
@@ -7,7 +8,7 @@ export const artist = defineType({
   fields: [
     defineField({ name: 'name', title: 'Name', type: 'string', validation: r => r.required() }),
     defineField({ name: 'slug', title: 'Slug', type: 'slug', options: { source: 'name' }, validation: r => r.required() }),
-    defineField({ name: 'bio', title: 'Bio', type: 'text' }),
+    withAiDraft(defineField({ name: 'bio', title: 'Bio', type: 'text' })),
     defineField({ name: 'nationality', title: 'Nationality', type: 'string' }),
     defineField({ name: 'website', title: 'Website', type: 'url' }),
     defineField({ name: 'images', title: 'Images', type: 'array', of: [{ type: 'image', options: { hotspot: true } }] }),

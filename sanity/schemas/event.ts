@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity'
+import { withAiDraft } from '../plugins/aiDraft'
 
 export const event = defineType({
   name: 'event',
@@ -16,7 +17,7 @@ export const event = defineType({
       validation: r => r.required(),
     }),
     defineField({ name: 'date', title: 'Date', type: 'datetime', validation: r => r.required() }),
-    defineField({ name: 'description', title: 'Description', type: 'text' }),
+    withAiDraft(defineField({ name: 'description', title: 'Description', type: 'text' })),
     defineField({ name: 'isFree', title: 'Free admission', type: 'boolean', initialValue: true }),
   ],
   preview: {
