@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+function getAnthropicClient() {
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+}
 
 export async function POST(request: NextRequest) {
+  const anthropic = getAnthropicClient()
   const { fieldName, currentValue, documentType, documentTitle } = await request.json()
 
   if (!fieldName || !documentType) {
