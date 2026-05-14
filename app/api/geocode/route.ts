@@ -13,12 +13,12 @@ function getWriteClient() {
 }
 
 async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address + ', Berlin, Germany')}&key=${process.env.GOOGLE_GEOCODING_API_KEY}`
-  const res = await fetch(url)
+  const query = encodeURIComponent(`${address}, Berlin, Germany`)
+  const url = `https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1&countrycodes=de`
+  const res = await fetch(url, { headers: { 'User-Agent': 'raster-berlin-art-guide/1.0' } })
   const data = await res.json()
-  if (data.status !== 'OK' || !data.results[0]) return null
-  const { lat, lng } = data.results[0].geometry.location
-  return { lat, lng }
+  if (!data[0]) return null
+  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
 }
 
 export async function POST(request: NextRequest) {
