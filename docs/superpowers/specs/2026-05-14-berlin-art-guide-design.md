@@ -131,10 +131,23 @@ Row-level security (RLS) enabled on all tables — users can only read and write
 
 ---
 
+## Responsive Design
+
+The site must work fully on desktop browsers and mobile browsers — no separate mobile app needed.
+
+- Mobile-first CSS using Tailwind breakpoints
+- Map on mobile: full-screen with a bottom sheet panel (instead of side panel) for venue details, touch-friendly pin targets
+- Navigation: hamburger menu on mobile, full nav on desktop
+- Event calendar: list view on mobile, grid/calendar view on desktop
+- All tap targets minimum 44px
+- Images use Next.js `<Image>` with responsive sizes for fast loading on mobile networks
+
+---
+
 ## Out of Scope
 
 - Social/sharing features (users cannot share their journals or saved lists publicly)
 - Gallery self-submission portal
 - Ticketing or e-commerce
 - AI chat guide for visitors
-- Mobile app
+- Native mobile app (iOS/Android)
