@@ -2,7 +2,7 @@ import { sanityClient } from '@/lib/sanity/client'
 import { mapVenuesQuery } from '@/lib/sanity/queries'
 import { Map } from '@/components/map/Map'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function MapPage() {
   const venues = await sanityClient.fetch(mapVenuesQuery)
