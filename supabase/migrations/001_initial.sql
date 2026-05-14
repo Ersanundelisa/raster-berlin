@@ -41,11 +41,8 @@ alter table public.saved_events enable row level security;
 alter table public.saved_venues enable row level security;
 alter table public.journal_entries enable row level security;
 
-create policy "Users can read own profile" on public.profiles
-  for select using (auth.uid() = id);
-
-create policy "Users can update own profile" on public.profiles
-  for update using (auth.uid() = id);
+create policy "Users manage own profile" on public.profiles
+  for all using (auth.uid() = id) with check (auth.uid() = id);
 
 create policy "Users manage own saved_events" on public.saved_events
   for all using (auth.uid() = user_id);
