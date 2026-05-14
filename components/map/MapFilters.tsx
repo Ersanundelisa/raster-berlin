@@ -7,7 +7,7 @@ interface Props {
   setNeighborhood: (v: string) => void
 }
 
-const neighborhoods = ['All', 'Mitte', 'Prenzlauer Berg', 'Kreuzberg', 'Friedrichshain', 'Charlottenburg', 'Schöneberg', 'Neukölln']
+const neighborhoods = ['All', 'Mitte', 'Prenzlauer Berg', 'Kreuzberg', 'Friedrichshain', 'Charlottenburg', 'Schöneberg', 'Neukölln', 'Wedding', 'Tiergarten']
 
 export function MapFilters({ venueType, setVenueType, neighborhood, setNeighborhood }: Props) {
   return (

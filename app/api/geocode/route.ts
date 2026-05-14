@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@sanity/client'
+import { isValidSignature, SIGNATURE_HEADER_NAME } from '@sanity/webhook'
 
 function getWriteClient() {
   return createClient({
@@ -21,13 +22,15 @@ async function geocodeAddress(address: string): Promise<{ lat: number; lng: numb
 }
 
 export async function POST(request: NextRequest) {
-  const signature = request.headers.get('sanity-webhook-signature') ?? ''
-  if (signature !== process.env.SANITY_WEBHOOK_SECRET) {
+  const body = await request.text()
+  const signature = request.headers.get(SIGNATURE_HEADER_NAME) ?? ''
+  const valid = await isValidSignature(body, signature, process.env.SANITY_WEBHOOK_SECRET!)
+  if (!valid) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = await request.json()
-  const { _id, _type, address } = body
+  const parsed = JSON.parse(body)
+  const { _id, _type, address } = parsed
 
   if (_type !== 'gallery' || !address) {
     return NextResponse.json({ ok: true, skipped: true })
