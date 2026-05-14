@@ -18,31 +18,40 @@ export function withAiDraft(fieldConfig: any) {
 
 function AiDraftInput(props: any) {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const documentType = useFormValue(['_type']) as string
   const documentTitle = (useFormValue(['title']) as string) || (useFormValue(['name']) as string) || ''
 
   async function handleDraft() {
     setLoading(true)
-    const res = await fetch('/api/ai-draft', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fieldName: props.id,
-        currentValue: props.value ?? '',
-        documentType,
-        documentTitle,
-      }),
-    })
-    const data = await res.json()
-    setLoading(false)
-    if (data.draft && props.onChange) {
-      props.onChange(set(data.draft))
+    setError(null)
+    try {
+      const res = await fetch('/api/ai-draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fieldName: props.id,
+          currentValue: props.value ?? '',
+          documentType,
+          documentTitle,
+        }),
+      })
+      if (!res.ok) { setError('AI draft failed. Try again.'); return }
+      const data = await res.json()
+      if (data.draft && props.onChange) {
+        props.onChange(set(data.draft))
+      }
+    } catch {
+      setError('Network error. Try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <div>
       {props.renderDefault(props)}
+      {error && <p style={{ color: '#c0392b', fontSize: 12, marginTop: 4 }}>{error}</p>}
       <button
         type="button"
         onClick={handleDraft}

@@ -14,13 +14,17 @@ export async function POST(request: NextRequest) {
 
   const userPrompt = `Write editorial copy for the "${fieldName}" field of a ${documentType} document titled "${documentTitle}".${currentValue ? `\n\nExisting draft to improve:\n${currentValue}` : '\n\nWrite a fresh draft.'}`
 
-  const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 400,
-    system: systemPrompt,
-    messages: [{ role: 'user', content: userPrompt }],
-  })
+  try {
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 400,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    })
 
-  const text = message.content[0].type === 'text' ? message.content[0].text : ''
-  return NextResponse.json({ draft: text })
+    const text = message.content[0].type === 'text' ? message.content[0].text : ''
+    return NextResponse.json({ draft: text })
+  } catch {
+    return NextResponse.json({ error: 'AI generation failed' }, { status: 502 })
+  }
 }

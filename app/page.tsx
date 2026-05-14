@@ -47,9 +47,11 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featured.map((ex: any) => {
+              const venueSlug = ex.venue?.slug?.current
+              if (!venueSlug) return null
               const imgUrl = ex.images?.[0] ? urlForImage(ex.images[0]).width(800).height(600).url() : null
               return (
-                <Link key={ex._id} href={`/galleries/${ex.venue?.slug?.current}`} className="group block">
+                <Link key={ex._id} href={`/galleries/${venueSlug}`} className="group block">
                   <div className="aspect-[4/3] overflow-hidden rounded-xl bg-gray-100 mb-4">
                     {imgUrl && (
                       <Image src={imgUrl} alt={ex.title} width={800} height={600}
