@@ -51,9 +51,11 @@ export default async function ArtistPage({ params }: { params: Promise<{ slug: s
             {artist.currentExhibitions.map((ex: any) => (
               <div key={ex.slug.current} className="flex justify-between items-center py-3 border-b border-gray-100">
                 <p className="text-sm font-medium">{ex.title}</p>
-                <Link href={`/galleries/${ex.venue.slug.current}`} className="text-xs text-gray-400 hover:underline">
-                  {ex.venue.name}
-                </Link>
+                {ex.venue?.slug?.current && (
+                  <Link href={`/galleries/${ex.venue.slug.current}`} className="text-xs text-gray-400 hover:underline">
+                    {ex.venue.name}
+                  </Link>
+                )}
               </div>
             ))}
           </div>
