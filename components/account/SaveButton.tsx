@@ -5,6 +5,6 @@ interface Props {
   entityType: 'event' | 'venue'
 }
 
-export function SaveButton({ entityId, entityType }: Props) {
+export function SaveButton({ entityId: _entityId, entityType: _entityType }: Props) {
   return null
 }
