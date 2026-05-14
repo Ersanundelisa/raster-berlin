@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { SaveButton } from '@/components/account/SaveButton'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

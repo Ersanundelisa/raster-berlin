@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { urlForImage } from '@/lib/sanity/image'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function ArtistPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

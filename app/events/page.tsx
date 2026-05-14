@@ -2,7 +2,7 @@ import { sanityClient } from '@/lib/sanity/client'
 import { upcomingEventsQuery } from '@/lib/sanity/queries'
 import { CalendarView } from '@/components/events/CalendarView'
 
-export const revalidate = 1800
+export const dynamic = 'force-dynamic'
 
 export default async function EventsPage() {
   const events = await sanityClient.fetch(upcomingEventsQuery)

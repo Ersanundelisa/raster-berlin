@@ -2,7 +2,7 @@ import { sanityClient } from '@/lib/sanity/client'
 import { newsListQuery } from '@/lib/sanity/queries'
 import { NewsCard } from '@/components/news/NewsCard'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function NewsPage() {
   const articles = await sanityClient.fetch(newsListQuery)

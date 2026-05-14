@@ -6,7 +6,7 @@ import { urlForImage } from '@/lib/sanity/image'
 import { EventCard } from '@/components/events/EventCard'
 import { formatDate } from '@/lib/utils'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const [featured, upcomingEvents] = await Promise.all([

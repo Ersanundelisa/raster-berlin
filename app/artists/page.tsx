@@ -2,7 +2,7 @@ import { sanityClient } from '@/lib/sanity/client'
 import { artistListQuery } from '@/lib/sanity/queries'
 import { ArtistCard } from '@/components/artists/ArtistCard'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function ArtistsPage() {
   const artists = await sanityClient.fetch(artistListQuery)

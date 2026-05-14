@@ -2,7 +2,7 @@ import { sanityClient } from '@/lib/sanity/client'
 import { galleryListQuery } from '@/lib/sanity/queries'
 import { VenueCard } from '@/components/venue/VenueCard'
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 export default async function GalleriesPage() {
   const venues = await sanityClient.fetch(galleryListQuery)
