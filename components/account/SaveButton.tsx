@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { LoginModal } from '@/components/ui/LoginModal'
@@ -15,7 +15,7 @@ export function SaveButton({ entityId, entityType }: Props) {
   const [loading, setLoading] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
-  const supabase = createBrowserClient()
+  const supabase = useMemo(() => createBrowserClient(), [])
 
   const table = entityType === 'event' ? 'saved_events' : 'saved_venues'
   const column = entityType === 'event' ? 'sanity_event_id' : 'sanity_venue_id'
@@ -28,7 +28,7 @@ export function SaveButton({ entityId, entityType }: Props) {
       supabase.from(table).select('id').eq('user_id', uid).eq(column, entityId).single()
         .then(({ data }) => setSaved(!!data))
     })
-  }, [entityId, table, column])
+  }, [supabase, entityId, table, column])
 
   async function toggle() {
     if (!userId) { setShowLogin(true); return }
@@ -40,6 +40,18 @@ export function SaveButton({ entityId, entityType }: Props) {
       await supabase.from(table).insert({ user_id: userId, [column]: entityId })
       setSaved(true)
     }
+    setLoading(false)
+  }
+
+  async function handleLoginSuccess() {
+    setShowLogin(false)
+    const { data } = await supabase.auth.getSession()
+    const uid = data.session?.user.id
+    if (!uid) return
+    setUserId(uid)
+    setLoading(true)
+    await supabase.from(table).insert({ user_id: uid, [column]: entityId })
+    setSaved(true)
     setLoading(false)
   }
 
@@ -57,7 +69,7 @@ export function SaveButton({ entityId, entityType }: Props) {
         {saved ? 'Saved' : 'Save'}
       </button>
       {showLogin && (
-        <LoginModal onClose={() => setShowLogin(false)} onSuccess={() => { setShowLogin(false); toggle() }} />
+        <LoginModal onClose={() => setShowLogin(false)} onSuccess={handleLoginSuccess} />
       )}
     </>
   )

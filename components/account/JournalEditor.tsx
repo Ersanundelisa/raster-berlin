@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { createBrowserClient } from '@/lib/supabase/client'
 
 interface Props {
@@ -12,7 +12,8 @@ export function JournalEditor({ userId, eventId }: Props) {
   const [body, setBody] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  const supabase = createBrowserClient()
+  const supabase = useMemo(() => createBrowserClient(), [])
+  const timerRef = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
     supabase.from('journal_entries')
@@ -21,7 +22,7 @@ export function JournalEditor({ userId, eventId }: Props) {
       .eq('sanity_event_id', eventId)
       .single()
       .then(({ data }) => { if (data) setBody(data.body) })
-  }, [userId, eventId])
+  }, [supabase, userId, eventId])
 
   async function save() {
     setSaving(true)
@@ -31,8 +32,11 @@ export function JournalEditor({ userId, eventId }: Props) {
     )
     setSaving(false)
     setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => setSaved(false), 2000)
   }
+
+  useEffect(() => () => clearTimeout(timerRef.current), [])
 
   return (
     <div className="mt-4">
