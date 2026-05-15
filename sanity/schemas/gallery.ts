@@ -1,5 +1,4 @@
 import { defineType, defineField } from 'sanity'
-import { withAiDraft } from '../plugins/aiDraft'
 
 export const gallery = defineType({
   name: 'gallery',
@@ -40,7 +39,7 @@ export const gallery = defineType({
       of: [{ type: 'string' }],
       description: 'e.g. ["Tue–Sat 11:00–18:00", "Sun 12:00–17:00"]',
     }),
-    withAiDraft(defineField({ name: 'about', title: 'About', type: 'text' })),
+    defineField({ name: 'about', title: 'About', type: 'text' }),
     defineField({
       name: 'images',
       title: 'Images',

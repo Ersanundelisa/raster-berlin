@@ -2,9 +2,6 @@
   "functions": {
     "app/api/geocode/route.ts": {
       "maxDuration": 10
-    },
-    "app/api/ai-draft/route.ts": {
-      "maxDuration": 30
     }
   }
 }
