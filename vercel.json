@@ -1,7 +1,1 @@
-{
-  "functions": {
-    "app/api/geocode/route.ts": {
-      "maxDuration": 10
-    }
-  }
-}
+{}
